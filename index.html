@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cephalosophie — Intelligence Éclairée</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Philosopher:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --void:      #04070f;
+    --deep:      #070e1f;
+    --azure:     #1a3a6e;
+    --cobalt:    #2455a4;
+    --electric:  #4a90d9;
+    --spark:     #89c4f4;
+    --white:     #f0f4ff;
+    --gold:      #d4a843;
+    --gold-soft: #e8c97a;
+    --neuron:    rgba(74,144,217,.6);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width:100%; height:100%;
+    overflow:hidden;
+    background: var(--void);
+    font-family: 'Philosopher', 'Cormorant Garamond', Georgia, serif;
+    color: var(--white);
+    cursor: none;
+  }
+
+  /* ── Custom cursor ── */
+  #cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--spark);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    box-shadow: 0 0 12px var(--spark), 0 0 24px var(--electric);
+    transition: transform .1s;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(74,144,217,.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all .18s ease;
+  }
+
+  /* ── Neural canvas ── */
+  #neural {
+    position: fixed; inset:0;
+    z-index: 1;
+  }
+
+  /* ── Grain ── */
+  #grain {
+    position: fixed; inset:0;
+    z-index: 5;
+    opacity: .3;
+    pointer-events: none;
+  }
+
+  /* ── Ambient glow ── */
+  .ambient {
+    position: fixed; inset:0;
+    z-index: 2;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 50%, rgba(26,58,110,.5) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 30%, rgba(36,85,164,.2) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 70%, rgba(10,20,50,.4) 0%, transparent 60%);
+    animation: ambientPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes ambientPulse {
+    0%   { opacity:.7; }
+    100% { opacity:1; }
+  }
+
+  /* ── Greek column motif SVG ── */
+  .columns {
+    position: fixed;
+    bottom: 0; left:0; right:0;
+    height: 220px;
+    z-index: 3;
+    opacity: .06;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 5vw;
+    pointer-events: none;
+  }
+  .col-pillar {
+    width: 28px;
+    background: linear-gradient(to top, var(--white), transparent);
+    border-radius: 3px 3px 0 0;
+    position: relative;
+  }
+  .col-pillar::before {
+    content:'';
+    position:absolute;
+    top:-12px; left:-8px; right:-8px;
+    height:12px;
+    background: var(--white);
+    border-radius: 2px;
+  }
+  .col-pillar::after {
+    content:'';
+    position:absolute;
+    bottom:0; left:-6px; right:-6px;
+    height:20px;
+    background: var(--white);
+  }
+
+  /* ── Scene ── */
+  .scene {
+    position: fixed; inset:0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Eyebrow */
+  .eyebrow {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: .65rem;
+    font-style: italic;
+    letter-spacing: .4em;
+    color: rgba(137,196,244,.5);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: riseIn .9s ease 0.5s forwards;
+    margin-bottom: 1.6rem;
+  }
+
+  /* Title */
+  .title-wrap {
+    text-align: center;
+    position: relative;
+  }
+
+  .title {
+    font-family: 'Philosopher', Georgia, serif;
+    font-size: clamp(3rem, 9vw, 7rem);
+    font-weight: 700;
+    letter-spacing: .08em;
+    line-height: 1;
+    color: var(--white);
+    opacity: 0;
+    transform: translateY(40px);
+    animation: riseIn 1.4s cubic-bezier(.16,1,.3,1) .8s forwards;
+    position: relative;
+  }
+  .title .part-cepha {
+    color: var(--white);
+  }
+  .title .part-sophie {
+    color: var(--gold-soft);
+    position: relative;
+  }
+  .title .part-sophie::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left:0; right:0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation: lineGrow 1.5s ease 2.5s both;
+    transform-origin: center;
+    transform: scaleX(0);
+  }
+  @keyframes lineGrow { to { transform: scaleX(1); } }
+
+  /* Halo behind title */
+  .title-halo {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 500px; height: 200px;
+    background: radial-gradient(ellipse, rgba(74,144,217,.12) 0%, transparent 70%);
+    filter: blur(40px);
+    animation: haloPulse 4s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes haloPulse {
+    0%   { opacity:.6; transform:translate(-50%,-50%) scale(1); }
+    100% { opacity:1;  transform:translate(-50%,-50%) scale(1.1); }
+  }
+
+  /* Greek roots */
+  .roots {
+    display: flex;
+    gap: 3rem;
+    margin-top: 1.4rem;
+    opacity: 0;
+    animation: riseIn .9s ease 1.8s forwards;
+  }
+  .root-item {
+    text-align: center;
+  }
+  .root-greek {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--spark);
+    display: block;
+    letter-spacing: .06em;
+  }
+  .root-arrow {
+    font-size: .55rem;
+    color: rgba(137,196,244,.3);
+    letter-spacing: .2em;
+    display: block;
+    margin: .2rem 0;
+  }
+  .root-meaning {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: .7rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: rgba(240,244,255,.35);
+    display: block;
+  }
+  .root-sep {
+    align-self: center;
+    color: rgba(74,144,217,.3);
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin: 2rem 0;
+    opacity: 0;
+    animation: riseIn .9s ease 2.2s forwards;
+  }
+  .div-line {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(74,144,217,.4));
+  }
+  .div-line:last-child {
+    background: linear-gradient(90deg, rgba(74,144,217,.4), transparent);
+  }
+  .div-omega {
+    font-size: 1rem;
+    color: rgba(74,144,217,.5);
+    animation: omegaSpin 12s linear infinite;
+    display: inline-block;
+  }
+  @keyframes omegaSpin {
+    0%,100% { transform: scale(1) rotate(0deg); opacity:.5; }
+    50%      { transform: scale(1.3) rotate(180deg); opacity:1; }
+  }
+
+  /* Tagline */
+  .tagline {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(240,244,255,.45);
+    letter-spacing: .06em;
+    text-align: center;
+    line-height: 1.9;
+    opacity: 0;
+    animation: riseIn .9s ease 2.5s forwards;
+    max-width: 480px;
+  }
+  .tagline strong {
+    font-weight: 400;
+    color: rgba(137,196,244,.7);
+    font-style: normal;
+  }
+
+  /* Construction badge */
+  .badge {
+    margin-top: 2.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .7rem;
+    opacity: 0;
+    animation: riseIn .9s ease 3s forwards;
+  }
+  .badge-label {
+    font-family: 'Philosopher', serif;
+    font-size: .58rem;
+    letter-spacing: .45em;
+    text-transform: uppercase;
+    color: var(--gold);
+    position: relative;
+    padding: 0 1.2rem;
+  }
+  .badge-label::before,
+  .badge-label::after {
+    content: '◆';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    font-size: .4rem;
+    color: rgba(212,168,67,.4);
+  }
+  .badge-label::before { left:0; }
+  .badge-label::after  { right:0; }
+
+  .badge-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(.85rem, 1.5vw, 1rem);
+    font-style: italic;
+    color: rgba(240,244,255,.3);
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  /* Pulse dots */
+  .pulse-row {
+    display: flex;
+    gap: .5rem;
+    margin-top: 1.8rem;
+    opacity: 0;
+    animation: riseIn .9s ease 3.4s forwards;
+  }
+  .pdot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(74,144,217,.2);
+  }
+  .pdot.on {
+    background: var(--electric);
+    animation: neuronFire 2s ease-in-out infinite;
+  }
+  @keyframes neuronFire {
+    0%,100% { box-shadow: 0 0 4px var(--electric); transform:scale(1); }
+    50%      { box-shadow: 0 0 14px var(--spark), 0 0 28px rgba(74,144,217,.4); transform:scale(1.5); }
+  }
+
+  /* Corner marks */
+  .corner {
+    position: fixed;
+    z-index: 20;
+    opacity: 0;
+    animation: riseIn 1.5s ease 3.8s forwards;
+  }
+  .corner svg { display:block; }
+  .corner-tl { top:28px; left:28px; }
+  .corner-tr { top:28px; right:28px; transform:scaleX(-1); }
+  .corner-bl { bottom:28px; left:28px; transform:scaleY(-1); }
+  .corner-br { bottom:28px; right:28px; transform:scale(-1,-1); }
+
+  /* Utility */
+  @keyframes riseIn {
+    to { opacity:1; transform:translateY(0) translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="grain"></canvas>
+<canvas id="neural"></canvas>
+<div class="ambient"></div>
+
+<!-- Greek columns motif -->
+<div class="columns" id="cols"></div>
+
+<!-- Corner SVG ornaments -->
+<div class="corner corner-tl">
+  <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+    <path d="M2 48 L2 2 L48 2" stroke="rgba(74,144,217,.35)" stroke-width="1"/>
+    <circle cx="2" cy="2" r="2.5" fill="rgba(74,144,217,.5)"/>
+  </svg>
+</div>
+<div class="corner corner-tr">
+  <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+    <path d="M2 48 L2 2 L48 2" stroke="rgba(74,144,217,.35)" stroke-width="1"/>
+    <circle cx="2" cy="2" r="2.5" fill="rgba(74,144,217,.5)"/>
+  </svg>
+</div>
+<div class="corner corner-bl">
+  <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+    <path d="M2 48 L2 2 L48 2" stroke="rgba(74,144,217,.35)" stroke-width="1"/>
+    <circle cx="2" cy="2" r="2.5" fill="rgba(74,144,217,.5)"/>
+  </svg>
+</div>
+<div class="corner corner-br">
+  <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+    <path d="M2 48 L2 2 L48 2" stroke="rgba(74,144,217,.35)" stroke-width="1"/>
+    <circle cx="2" cy="2" r="2.5" fill="rgba(74,144,217,.5)"/>
+  </svg>
+</div>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Main content -->
+<div class="scene">
+  <p class="eyebrow">κεφαλή · σοφία</p>
+
+  <div class="title-wrap">
+    <div class="title-halo"></div>
+    <h1 class="title">
+      <span class="part-cepha">Cephalo</span><span class="part-sophie">sophie</span>
+    </h1>
+  </div>
+
+  <div class="roots">
+    <div class="root-item">
+      <span class="root-greek">κεφαλή</span>
+      <span class="root-arrow">↓</span>
+      <span class="root-meaning">cerveau · tête</span>
+    </div>
+    <span class="root-sep">+</span>
+    <div class="root-item">
+      <span class="root-greek">σοφία</span>
+      <span class="root-arrow">↓</span>
+      <span class="root-meaning">sagesse · lumière</span>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-line"></div>
+    <span class="div-omega">Ω</span>
+    <div class="div-line"></div>
+  </div>
+
+  <p class="tagline">
+    L'intelligence n'est pas une destination —<br>
+    c'est <strong>la lumière que le cerveau projette</strong><br>
+    sur l'obscurité du monde.
+  </p>
+
+  <div class="badge">
+    <span class="badge-label">En gestation</span>
+    <p class="badge-text">
+      Quelque chose d'intelligent prend forme.<br>
+      Revenez bientôt.
+    </p>
+  </div>
+
+  <div class="pulse-row">
+    <div class="pdot on"></div>
+    <div class="pdot"></div>
+    <div class="pdot"></div>
+    <div class="pdot"></div>
+    <div class="pdot"></div>
+    <div class="pdot"></div>
+    <div class="pdot"></div>
+  </div>
+</div>
+
+<script>
+// ─── Neural network background ───────────────────────────────
+(function(){
+  const canvas = document.getElementById('neural');
+  const ctx    = canvas.getContext('2d');
+
+  let W, H, nodes = [], mouse = {x:0, y:0};
+  const NODE_COUNT = 70;
+  const MAX_DIST   = 160;
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Node class
+  class Node {
+    constructor(){
+      this.reset(true);
+    }
+    reset(init){
+      this.x  = Math.random() * (W || window.innerWidth);
+      this.y  = Math.random() * (H || window.innerHeight);
+      this.vx = (Math.random()-.5) * .4;
+      this.vy = (Math.random()-.5) * .4;
+      this.r  = 1.5 + Math.random() * 2;
+      this.pulse = Math.random() * Math.PI * 2;
+      this.pulseSpeed = .02 + Math.random() * .03;
+      this.alpha = .3 + Math.random() * .5;
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      this.pulse += this.pulseSpeed;
+      if(this.x < -10) this.x = W+10;
+      if(this.x > W+10) this.x = -10;
+      if(this.y < -10) this.y = H+10;
+      if(this.y > H+10) this.y = -10;
+    }
+    draw(){
+      const a = this.alpha * (.5 + .5*Math.sin(this.pulse));
+      const glow = ctx.createRadialGradient(this.x,this.y,0, this.x,this.y,this.r*4);
+      glow.addColorStop(0, `rgba(137,196,244,${a})`);
+      glow.addColorStop(1, 'rgba(137,196,244,0)');
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r*4, 0, Math.PI*2);
+      ctx.fillStyle = glow;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(137,196,244,${a})`;
+      ctx.fill();
+    }
+  }
+
+  for(let i=0; i<NODE_COUNT; i++) nodes.push(new Node());
+
+  // Mouse node
+  const mouseNode = { x: W/2, y: H/2, r:0, pulse:0, pulseSpeed:0, alpha:0 };
+  document.addEventListener('mousemove', e=>{ mouseNode.x=e.clientX; mouseNode.y=e.clientY; });
+
+  function drawConnections(){
+    const all = [...nodes, mouseNode];
+    for(let i=0; i<nodes.length; i++){
+      for(let j=i+1; j<all.length; j++){
+        const dx = nodes[i].x - all[j].x;
+        const dy = nodes[i].y - all[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < MAX_DIST){
+          const alpha = (1 - dist/MAX_DIST) * .18;
+          // Signal pulse along line
+          const t = (Date.now()/1000 * .5) % 1;
+          const px = nodes[i].x + (all[j].x - nodes[i].x) * t;
+          const py = nodes[i].y + (all[j].y - nodes[i].y) * t;
+
+          const grad = ctx.createLinearGradient(nodes[i].x, nodes[i].y, all[j].x, all[j].y);
+          grad.addColorStop(0,   `rgba(74,144,217,0)`);
+          grad.addColorStop(0.5, `rgba(74,144,217,${alpha*2})`);
+          grad.addColorStop(1,   `rgba(74,144,217,0)`);
+
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(all[j].x,   all[j].y);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = .6;
+          ctx.stroke();
+
+          // Moving spark on some connections
+          if(alpha > .12){
+            ctx.beginPath();
+            ctx.arc(px, py, 1.5, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(137,196,244,${alpha*3})`;
+            ctx.fill();
+          }
+        }
+      }
+    }
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    drawConnections();
+    nodes.forEach(n=>{ n.update(); n.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── Grain ───────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('grain');
+  const x = c.getContext('2d');
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  function tick(){
+    const img = x.createImageData(c.width, c.height);
+    for(let i=0; i<img.data.length; i+=4){
+      const v = (Math.random()*255)|0;
+      img.data[i]=img.data[i+1]=img.data[i+2]=v;
+      img.data[i+3]=14;
+    }
+    x.putImageData(img,0,0);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ─── Greek columns ───────────────────────────────────────────
+(function(){
+  const wrap = document.getElementById('cols');
+  const heights = [120,160,100,180,140,110,170,130,160,100,150,120,180,110,140];
+  heights.forEach(h=>{
+    const p = document.createElement('div');
+    p.className = 'col-pillar';
+    p.style.height = h + 'px';
+    wrap.appendChild(p);
+  });
+})();
+
+// ─── Custom cursor ───────────────────────────────────────────
+(function(){
+  const dot  = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0,my=0, rx=0,ry=0;
+  document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+  function loop(){
+    rx += (mx-rx)*.15;
+    ry += (my-ry)*.15;
+    dot.style.left  = mx+'px'; dot.style.top  = my+'px';
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── Pulse dots cycling ──────────────────────────────────────
+(function(){
+  const dots = document.querySelectorAll('.pdot');
+  let i=0;
+  setInterval(()=>{
+    dots.forEach(d=>d.classList.remove('on'));
+    dots[i].classList.add('on');
+    // Sometimes fire 2 at once like a synapse
+    if(Math.random()>.6) {
+      const j=(i+Math.floor(Math.random()*3+1))%dots.length;
+      dots[j].classList.add('on');
+    }
+    i=(i+1)%dots.length;
+  }, 700);
+})();
+
+// ─── Title 3D tilt on mouse ──────────────────────────────────
+(function(){
+  const title = document.querySelector('.title');
+  document.addEventListener('mousemove', e=>{
+    const rx = (e.clientX/window.innerWidth  -.5)*10;
+    const ry = (e.clientY/window.innerHeight -.5)*6;
+    title.style.transform=`perspective(900px) rotateY(${rx}deg) rotateX(${-ry}deg)`;
+  });
+})();
+</script>
+</body>
+</html>
