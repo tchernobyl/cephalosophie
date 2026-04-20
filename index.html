@@ -150,8 +150,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 52px;display:fl
 /* ── SOCIAL + FOOTER ── */
 .socialsec{position:relative;z-index:10;padding:80px 72px;border-top:1px solid rgba(201,150,58,.07);display:flex;flex-direction:column;align-items:center;gap:36px}
 .soc-title{font-family:'Cinzel',serif;font-size:20px;color:var(--textd);letter-spacing:2px}
-.soc-links{display:flex;gap:20px}
-.soc-btn{display:flex;align-items:center;gap:12px;text-decoration:none;padding:14px 28px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);color:var(--textm);font-size:13px;transition:all .3s;font-family:'Cinzel',serif;letter-spacing:1px}
+.soc-links{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.soc-btn{display:flex;align-items:center;gap:12px;text-decoration:none;padding:14px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);color:var(--textm);font-size:13px;transition:all .3s;font-family:'Cinzel',serif;letter-spacing:1px;width:210px}
 .soc-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,150,58,.06);transform:translateY(-2px)}
 .soc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 
@@ -215,6 +215,10 @@ footer{position:relative;z-index:10;padding:36px 72px;border-top:1px solid rgba(
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
     </a>
     <a href="https://kantoaplo.com" target="_blank" class="nskip">KANTO APLO ↗</a>
+    <a href="mailto:contact@cephalosophie.com" style="display:inline-flex;align-items:center;gap:7px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--bg);background:var(--gold);padding:9px 18px;border-radius:7px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='#E8C060'" onmouseout="this.style.background='#C9963A'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Contact
+    </a>
   </div>
 </nav>
 
@@ -364,6 +368,15 @@ footer{position:relative;z-index:10;padding:36px 72px;border-top:1px solid rgba(
       <div>
         <div style="color:var(--text);font-size:13px;letter-spacing:1px">KANTO APLO</div>
         <div style="font-size:10px;color:var(--textd);font-family:'DM Mono',monospace;margin-top:2px">kantoaplo.com</div>
+      </div>
+    </a>
+    <a href="mailto:contact@cephalosophie.com" class="soc-btn">
+      <div class="soc-icon" style="background:rgba(45,212,160,.1)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2DD4A0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div>
+        <div style="color:var(--text);font-size:13px;letter-spacing:1px">Contact</div>
+        <div style="font-size:10px;color:var(--textd);font-family:'DM Mono',monospace;margin-top:2px">cephalosophie.com</div>
       </div>
     </a>
   </div>
